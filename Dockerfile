@@ -1,12 +1,13 @@
 FROM node:20 AS builder
 WORKDIR /build
 
-COPY ./web/package.json ./web/yarn.lock ./
-RUN yarn install --frozen-lockfile
+COPY ./web/package.json ./
+RUN corepack enable && yarn install --non-interactive
 
 COPY ./web .
 COPY ./VERSION .
 RUN REACT_APP_VERSION=$(cat VERSION) yarn build
+
 
 FROM golang AS builder2
 ENV GO111MODULE=on \
